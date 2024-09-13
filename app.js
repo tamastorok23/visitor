@@ -1,10 +1,13 @@
 import Koa from 'koa';
 import Router from 'koa-router';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import bodyParser from 'koa-bodyparser';
 
 const app = new Koa();
 const router = new Router();
+
+puppeteer.use(StealthPlugin()); // Use stealth plugin
 
 app.use(
   bodyParser({
@@ -38,7 +41,7 @@ async function visitPage(url) {
     console.log(url);
 
     const browser = await puppeteer.launch({
-        headless: true, // You can switch to true if you don't need to view the browser
+        headless: false,
         args: [
             '--disable-dev-shm-usage',
             '--no-sandbox',
@@ -53,13 +56,13 @@ async function visitPage(url) {
 
     try {
         console.log('Navigating to page...');
-        // Navigate to the page and wait for DOM content to load
-        await page.goto(url, { waitUntil: 'domcontentloaded' });
+        // Navigate to the page and wait for the network to be idle
+        await page.goto(url, { waitUntil: 'networkidle2' });
 
         console.log('Waiting for 2 seconds...');
-        await page.waitForTimeout(2000); // Wait for 2 seconds
+        await page.waitForTimeout(2000);
 
-        // Extract the outer HTML of the entire page
+        // Get the entire page's HTML
         const data = await page.evaluate(() => document.documentElement.outerHTML);
 
         console.log('Closing browser...');
