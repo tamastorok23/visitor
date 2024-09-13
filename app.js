@@ -21,6 +21,8 @@ router.get('/', (ctx) => {
 router.get('/visit-page', async (ctx) => {
 	ctx.status = 200
 	
+	console.log('START');
+	
 	const url = 'https://www.heureka.cz/?h%5Bfraze%5D=6941812720943';
 
     try {
