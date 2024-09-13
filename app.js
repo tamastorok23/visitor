@@ -41,7 +41,7 @@ async function visitPage(url) {
     console.log(url);
 
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--disable-dev-shm-usage',
             '--no-sandbox',
