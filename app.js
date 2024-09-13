@@ -2,9 +2,6 @@ import Koa from 'koa';
 import Router from 'koa-router';
 import puppeteer from 'puppeteer';
 import bodyParser from 'koa-bodyparser';
-import path from 'path';
-import fs from 'fs';
-import ftp from 'basic-ftp';
 
 const app = new Koa();
 const router = new Router();
@@ -36,9 +33,10 @@ router.get('/visit-page', async (ctx) => {
 });
 
 async function visitPage(url) {
+    console.log(url);
 
     const browser = await puppeteer.launch({
-        headless: true,
+        headless: false, // You can switch to true if you don't need to view the browser
         args: [
             '--disable-dev-shm-usage',
             '--no-sandbox',
@@ -51,28 +49,23 @@ async function visitPage(url) {
 
     const page = await browser.newPage();
 
-    // Set a timeout for the entire page operation to ensure it completes in time
-    const pageTimeout = setTimeout(async () => {
-        await page.close();
-        await browser.close();
-        throw new Error('Page operation timed out');
-    }, 28000); // Giving a buffer for the overall request timeout
-
     try {
-		console.log('Navigating to login page...');
+        console.log('Navigating to page...');
+        // Navigate to the page and wait for DOM content to load
         await page.goto(url, { waitUntil: 'domcontentloaded' });
-		
-		console.log('Waiting 2 seconds...');
-		await page.waitForTimeout(2000); // Wait for 2 seconds
-		
-		const data = await page.evaluate(() => document.querySelector('*').outerHTML);
-		
-		await browser.close();
-		
-		return data;
+
+        console.log('Waiting for 2 seconds...');
+        await page.waitForTimeout(2000); // Wait for 2 seconds
+
+        // Extract the outer HTML of the entire page
+        const data = await page.evaluate(() => document.documentElement.outerHTML);
+
+        console.log('Closing browser...');
+        await browser.close();
+
+        return data;
     } catch (error) {
-        clearTimeout(pageTimeout);
-        await page.close();
+        console.error('Error:', error);
         await browser.close();
         throw error;
     }
