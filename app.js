@@ -36,7 +36,7 @@ async function visitPage(url) {
     console.log(url);
 
     const browser = await puppeteer.launch({
-        headless: false, // You can switch to true if you don't need to view the browser
+        headless: true, // You can switch to true if you don't need to view the browser
         args: [
             '--disable-dev-shm-usage',
             '--no-sandbox',
