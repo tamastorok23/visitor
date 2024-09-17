@@ -26,7 +26,7 @@ router.post('/visit-page', async (ctx) => {
 	
 	console.log('START');
 	
-	const url = ctx.url;
+	const url = ctx.body.url;
 
     try {
         const result = await visitPage(url);
