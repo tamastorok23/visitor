@@ -19,6 +19,7 @@ router.post('/visit-page', async (ctx) => {
 	ctx.status = 200
 	
 	console.log('START');
+	console.log(ctx.request.body);
 	
 	const url = ctx.request.body.url;
 
