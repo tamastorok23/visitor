@@ -9,13 +9,7 @@ const router = new Router();
 
 puppeteer.use(StealthPlugin()); // Use stealth plugin
 
-app.use(
-  bodyParser({
-    enableTypes: ['json', 'form'],
-    formLimit: '10mb',
-    jsonLimit: '10mb'
-  })
-);
+app.use(bodyParser());
 
 router.get('/', (ctx) => {
     ctx.body = 'Welcome to the Heureka login example!';
@@ -26,7 +20,7 @@ router.post('/visit-page', async (ctx) => {
 	
 	console.log('START');
 	
-	const url = ctx.body.url;
+	const url = ctx.request.body.url;
 
     try {
         const result = await visitPage(url);
