@@ -12,6 +12,16 @@ const stealthPlugin = StealthPlugin();
 stealthPlugin.enabledEvasions.delete('iframe.contentWindow');
 puppeteer.use(stealthPlugin);
 
+puppeteer.use(
+    RecaptchaPlugin({
+        provider: {
+            id: '2captcha',
+            token: '8973475ff14fd5065a687a7058f2de2b', // Cseréld ki a saját API kulcsodra
+        },
+        visualFeedback: true, // Látható megoldási folyamat
+    })
+);
+
 app.use(bodyParser());
 
 router.get('/', (ctx) => {
@@ -63,8 +73,10 @@ async function visitPage(url) {
 
     try {
         console.log('Navigating to page...');
-        // Navigate to the page and wait for the network to be idle
-        await page.goto(url, { waitUntil: 'networkidle2' });
+
+		await page.goto(url, { waitUntil: 'networkidle2' });
+		console.log('Solving captchas...');
+		await page.solveRecaptchas();
 
 		await page.mouse.move(60, 150); // Egér mozgatása
 
