@@ -66,8 +66,13 @@ async function visitPage(url) {
         // Navigate to the page and wait for the network to be idle
         await page.goto(url, { waitUntil: 'networkidle2' });
 
+		await page.mouse.move(60, 150); // Egér mozgatása
+
         console.log('Waiting for 2 seconds...');
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(1000);
+		
+		await page.mouse.move(120, 140); // Egér mozgatása
+		await page.keyboard.type('x'); // Billentyűleütések szimulálása
 
         // Get the entire page's HTML
         const data = await page.evaluate(() => document.documentElement.outerHTML);
