@@ -2,12 +2,15 @@ import Koa from 'koa';
 import Router from 'koa-router';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha';
 import bodyParser from 'koa-bodyparser';
 
 const app = new Koa();
 const router = new Router();
 
-puppeteer.use(StealthPlugin()); // Use stealth plugin
+const stealthPlugin = StealthPlugin();
+stealthPlugin.enabledEvasions.delete('iframe.contentWindow');
+puppeteer.use(stealthPlugin);
 
 app.use(bodyParser());
 
@@ -48,6 +51,11 @@ async function visitPage(url) {
     });
 
     const page = await browser.newPage();
+	
+	await page.setExtraHTTPHeaders({
+		'Accept-Language': 'en-US,en;q=0.9',
+		'Cache-Control': 'no-cache',
+	});
 	
 	await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
 	await page.setViewport({ width: 1280, height: 800 });
